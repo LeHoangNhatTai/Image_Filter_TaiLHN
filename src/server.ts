@@ -1,4 +1,5 @@
 import express from 'express';
+import {Request, Response} from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
@@ -29,11 +30,26 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   /**************************************************************************** */
 
+  app.get("/filteredimage", async ( req: Request, res: Response ) => {
+    let image_url = req.query.image_url.toString();
+    // validate the image_url query
+    if (!image_url) {
+      res.status(400).send("image_url is required Or missing or malformed");
+    } 
+    // call filterImageFromURL(image_url) to filter the image
+    let filteredpath = await filterImageFromURL(image_url);
+
+    // send the resulting file in the response
+    res.status(200).sendFile(filteredpath, () => {
+      // deletes any files on the server on finish of the response
+      deleteLocalFiles([filteredpath]);
+    });
+  });
   //! END @TODO1
   
   // Root Endpoint
   // Displays a simple message to the user
-  app.get( "/", async ( req, res ) => {
+  app.get( "/", async ( req: Request, res: Response ) => {
     res.send("try GET /filteredimage?image_url={{}}")
   } );
   
