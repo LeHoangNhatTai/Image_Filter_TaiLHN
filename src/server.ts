@@ -31,18 +31,18 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   /**************************************************************************** */
 
   app.get("/filteredimage", async ( req: Request, res: Response ) => {
-    let image_url = req.query.image_url.toString();
+    const image_url:string = req.query.image_url.toString();
     // validate the image_url query
     if (!image_url) {
       res.status(400).send("image_url is required Or missing or malformed");
     } 
     // call filterImageFromURL(image_url) to filter the image
-    let filteredpath = await filterImageFromURL(image_url);
+    const filtered_image:string = await filterImageFromURL(image_url);
 
     // send the resulting file in the response
-    res.status(200).sendFile(filteredpath, () => {
+    res.status(200).sendFile(filtered_image, () => {
       // deletes any files on the server on finish of the response
-      deleteLocalFiles([filteredpath]);
+      deleteLocalFiles([filtered_image]);
     });
   });
   //! END @TODO1
